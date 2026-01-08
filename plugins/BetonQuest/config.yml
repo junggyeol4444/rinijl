@@ -1,0 +1,36 @@
+# ============================================================
+# BetonQuest 기본 설정
+# 퀘스트 시스템 - Mineage Hybrid 서버용
+# ============================================================
+
+# 데이터베이스 설정 (파일 기반)
+database:
+  type: sqlite
+  # SQLite 파일 사용
+
+# 퀘스트 로드 설정
+quest_folder: quests
+# quests 폴더에서 퀘스트 로드
+
+# 대화 시스템
+conversations:
+  # NPC 대화 활성화
+  enabled: true
+
+# 플레이어 저널
+journal:
+  # 저널 활성화
+  enabled: true
+  
+  # 저널 명령어
+  command: journal
+
+# 알림 설정
+notifications:
+  # 퀘스트 알림 표시
+  enabled: true
+
+# 성능 설정
+performance:
+  # 비동기 작업
+  async: true

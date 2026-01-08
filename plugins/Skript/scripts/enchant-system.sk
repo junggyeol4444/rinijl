@@ -1,0 +1,185 @@
+# ============================================================
+# 아이템 강화 시스템 스크립트
+# 강화 확률:
+# +1~+7: 80% 성공
+# +8~+10: 30% 성공
+# +11 이상: 5% 성공
+# 실패 시 파괴 위험
+# ============================================================
+
+# ============================================================
+# 강화 명령어
+# ============================================================
+command /강화:
+	aliases: /enchant, /upgrade
+	trigger:
+		# 손에 아이템이 있는지 확인
+		if player's tool is air:
+			send "&c손에 아이템을 들고 사용하세요!" to player
+			stop
+		
+		# 현재 강화 수치 확인
+		set {_item} to player's tool
+		set {_lore} to lore of {_item}
+		set {_enchant_level} to 0
+		
+		# Lore에서 강화 수치 확인
+		loop {_lore}:
+			if loop-value contains "강화: +":
+				set {_text} to loop-value
+				replace all "&e강화: +" in {_text} with ""
+				set {_enchant_level} to {_text} parsed as integer
+				stop loop
+		
+		# 강화 비용 계산
+		set {_cost} to 1000 * (({_enchant_level} + 1) ^ 2)
+		
+		# 잔액 확인
+		if balance of player < {_cost}:
+			send "&c아데나가 부족합니다! (필요: %{_cost}% 아데나)" to player
+			stop
+		
+		# 확률 계산
+		if {_enchant_level} <= 6:
+			# +1~+7: 80% 성공
+			set {_success_rate} to 80
+		else if {_enchant_level} <= 9:
+			# +8~+10: 30% 성공
+			set {_success_rate} to 30
+		else:
+			# +11 이상: 5% 성공
+			set {_success_rate} to 5
+		
+		# 강화 진행 메시지
+		send "&e━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
+		send "&6[강화] 현재 강화: &e+%{_enchant_level}%" to player
+		send "&6[강화] 다음 강화: &e+%{_enchant_level} + 1%" to player
+		send "&6[강화] 성공 확률: &a%{_success_rate}%%%%" to player
+		send "&6[강화] 비용: &e%{_cost}% 아데나" to player
+		send "&c[경고] 실패 시 아이템이 파괴될 수 있습니다!" to player
+		send "&e━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
+		send "&a5초 후 자동으로 강화됩니다..." to player
+		send "&c취소하려면 아이템을 버리세요!" to player
+		
+		wait 5 seconds
+		
+		# 아이템이 아직 손에 있는지 확인
+		if player's tool is not {_item}:
+			send "&c강화가 취소되었습니다." to player
+			stop
+		
+		# 비용 차감
+		remove {_cost} from balance of player
+		
+		# 강화 시도
+		set {_random} to random integer between 1 and 100
+		
+		# 성공!
+		if {_random} <= {_success_rate}:
+			# 강화 수치 증가
+			add 1 to {_enchant_level}
+			
+			# 아이템 업그레이드
+			set {_new_name} to name of {_item}
+			if {_new_name} is not set:
+				set {_new_name} to "%type of {_item}%"
+			
+			# 강화 수치에 따른 색상
+			if {_enchant_level} <= 7:
+				set {_color} to "&a"
+			else if {_enchant_level} <= 10:
+				set {_color} to "&5"
+			else:
+				set {_color} to "&6"
+			
+			# 새 아이템 생성
+			set {_new_item} to {_item}
+			set name of {_new_item} to "%{_color}%+%{_enchant_level}% %{_new_name}%"
+			
+			# Lore 업데이트
+			set {_new_lore::*} to {_lore::*}
+			clear {_new_lore::*}
+			add "&e강화: +%{_enchant_level}%" to {_new_lore::*}
+			add "&7공격력 +%{_enchant_level} * 2%" to {_new_lore::*}
+			set lore of {_new_item} to {_new_lore::*}
+			
+			# 아이템 지급
+			set player's tool to {_new_item}
+			
+			# 성공 메시지
+			send "&a&l━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
+			send "&a&l강화 성공!" to player
+			send "&e+%{_enchant_level}% 강화에 성공했습니다!" to player
+			send "&a&l━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
+			
+			play sound "entity.player.levelup" to player
+			play sound "block.anvil.use" to player
+			
+			# 파티클 효과
+			loop 20 times:
+				play particle "VILLAGER_HAPPY" at player's location with offset 0.5, 1, 0.5 and speed 0.1 and count 5
+				wait 2 ticks
+			
+			# 높은 강화 시 전체 공지
+			if {_enchant_level} >= 10:
+				broadcast "&6&l[강화] &e%player%&7님이 &6+%{_enchant_level}% &7강화에 성공했습니다!"
+		
+		# 실패...
+		else:
+			send "&c&l━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
+			send "&c&l강화 실패..." to player
+			
+			# 파괴 확률 (50%)
+			set {_destroy_random} to random integer between 1 and 100
+			if {_destroy_random} <= 50:
+				# 아이템 파괴
+				set player's tool to air
+				send "&4아이템이 파괴되었습니다!" to player
+				play sound "entity.item.break" to player
+				play particle "EXPLOSION_LARGE" at player's location with count 1
+			else:
+				# 강화 수치 감소
+				if {_enchant_level} > 0:
+					remove 1 from {_enchant_level}
+					
+					# 감소된 레벨로 아이템 업데이트
+					set {_degraded_item} to {_item}
+					if {_enchant_level} > 0:
+						# 강화 수치가 남아있으면 업데이트
+						set {_color} to "&a"
+						if {_enchant_level} >= 8:
+							set {_color} to "&5"
+						if {_enchant_level} >= 11:
+							set {_color} to "&6"
+						
+						set name of {_degraded_item} to "%{_color}%+%{_enchant_level}% %type of {_item}%"
+						clear lore of {_degraded_item}
+						add "&e강화: +%{_enchant_level}%" to lore of {_degraded_item}
+						add "&7공격력 +%{_enchant_level} * 2%" to lore of {_degraded_item}
+						set player's tool to {_degraded_item}
+					else:
+						# 강화 수치가 0이 되면 원본으로 복구
+						set player's tool to {_degraded_item}
+					
+					send "&c강화 수치가 1 감소했습니다. (현재: +%{_enchant_level}%)" to player
+				else:
+					send "&c아이템은 유지되었습니다." to player
+				play sound "block.anvil.land" to player
+			
+			send "&c&l━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
+
+# ============================================================
+# 강화 확률 확인 명령어
+# ============================================================
+command /강화확률:
+	aliases: /enchantrate
+	trigger:
+		send "&e=== 강화 확률 ===" to player
+		send "&a+1 ~ +7: 80%% 성공률" to player
+		send "&5+8 ~ +10: 30%% 성공률" to player
+		send "&6+11 이상: 5%% 성공률" to player
+		send "" to player
+		send "&c실패 시 50%% 확률로 아이템 파괴!" to player
+		send "&c파괴되지 않으면 강화 수치 -1" to player
+		send "" to player
+		send "&7비용: 1000 × (강화+1)²" to player

@@ -1,0 +1,190 @@
+# ============================================================
+# 마법사 (Mage) 클래스 설정
+# 리니지 스타일 원거리 마법 딜러
+# ============================================================
+
+id: mage
+
+display:
+  name: '&9마법사'
+  lore:
+    - '&7강력한 마법을 구사하는 마법사'
+    - '&7원거리에서 적을 공격하는 딜러'
+    - ''
+    - '&e주 능력: &f마법 공격, 원거리'
+    - '&e무기: &f지팡이, 마법봉'
+
+icon:
+  material: BLAZE_ROD
+  name: '&9마법사 (Mage)'
+
+# ============================================================
+# 기본 스탯
+# ============================================================
+stats:
+  max-health:
+    base: 60
+    per-level: 2
+    # 낮은 체력
+  
+  max-mana:
+    base: 150
+    per-level: 5
+    # 매우 높은 마나
+  
+  max-stamina:
+    base: 30
+    per-level: 0.5
+  
+  attack-damage:
+    base: 5
+    per-level: 0.5
+    # 물리 공격력 낮음
+  
+  magic-damage:
+    base: 15
+    per-level: 3
+    # 마법 공격력 높음
+  
+  defense:
+    base: 3
+    per-level: 0.5
+    # 매우 낮은 방어력
+  
+  movement-speed:
+    base: 0.1
+    per-level: 0.001
+
+# ============================================================
+# 스탯 포인트 분배
+# ============================================================
+attributes:
+  strength:
+    name: '&c힘'
+    max: 99
+    effects:
+      - 'attack-damage:0.3'
+  
+  vitality:
+    name: '&4체력'
+    max: 99
+    effects:
+      - 'max-health:1'
+      - 'defense:0.1'
+  
+  dexterity:
+    name: '&a민첩'
+    max: 99
+    effects:
+      - 'movement-speed:0.002'
+  
+  intelligence:
+    name: '&9지능'
+    max: 99
+    effects:
+      - 'max-mana:3'
+      # 지능 1당 마나 +3
+      - 'magic-damage:0.5'
+      # 지능 1당 마법 공격력 +0.5
+
+# ============================================================
+# 스킬 목록
+# ============================================================
+skills:
+  # 스킬 1: 파이어볼
+  fireball:
+    name: '&e파이어볼'
+    max-level: 10
+    material: FIRE_CHARGE
+    lore:
+      - '&7불덩이를 발사하여 적에게 화염 피해를 입힙니다'
+      - ''
+      - '&e쿨다운: &f5초'
+      - '&e마나 소모: &f30'
+    unlock-level: 1
+  
+  # 스킬 2: 얼음 창
+  ice_spear:
+    name: '&e얼음 창'
+    max-level: 10
+    material: PACKED_ICE
+    lore:
+      - '&7얼음 창을 소환하여 적을 둔화시킵니다'
+      - ''
+      - '&e쿨다운: &f8초'
+      - '&e마나 소모: &f40'
+    unlock-level: 10
+  
+  # 스킬 3: 번개
+  lightning:
+    name: '&e번개'
+    max-level: 10
+    material: END_ROD
+    lore:
+      - '&7하늘에서 번개를 소환합니다'
+      - ''
+      - '&e쿨다운: &f15초'
+      - '&e마나 소모: &f60'
+    unlock-level: 20
+  
+  # 스킬 4: 텔레포트
+  teleport:
+    name: '&e텔레포트'
+    max-level: 5
+    material: ENDER_PEARL
+    lore:
+      - '&7바라보는 방향으로 순간이동합니다'
+      - ''
+      - '&e쿨다운: &f20초'
+      - '&e마나 소모: &f50'
+    unlock-level: 30
+  
+  # 스킬 5: 메테오
+  meteor:
+    name: '&e메테오'
+    max-level: 5
+    material: MAGMA_BLOCK
+    lore:
+      - '&7거대한 운석을 떨어뜨립니다'
+      - '&7광역 최강 마법'
+      - ''
+      - '&e쿨다운: &f60초'
+      - '&e마나 소모: &f100'
+    unlock-level: 50
+
+# ============================================================
+# 전직 옵션
+# ============================================================
+subclass:
+  min-level: 50
+  options: []
+
+# ============================================================
+# 장비 제한
+# ============================================================
+equipment:
+  weapons:
+    - STICK
+    - BLAZE_ROD
+    - BREEZE_ROD
+    # 지팡이 계열만 사용 가능
+  
+  armor:
+    - LEATHER_HELMET
+    - LEATHER_CHESTPLATE
+    - LEATHER_LEGGINGS
+    - LEATHER_BOOTS
+    - GOLDEN_HELMET
+    - GOLDEN_CHESTPLATE
+    - GOLDEN_LEGGINGS
+    - GOLDEN_BOOTS
+    # 가벼운 방어구만 착용 가능
+
+# ============================================================
+# 경험치 보너스
+# ============================================================
+exp-sources:
+  mob: 1.0
+  pvp: 1.0
+  quest: 1.2
+  # 퀘스트 경험치 20% 보너스

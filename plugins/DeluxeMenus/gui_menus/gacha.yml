@@ -1,0 +1,102 @@
+# ============================================================
+# DeluxeMenus 가챠 GUI 설정
+# 가챠 시스템 메뉴 - Mineage Hybrid 서버용
+# ============================================================
+
+# 메뉴 ID
+gacha_menu:
+  # 메뉴 제목
+  menu_title: '&6&l가챠 시스템'
+  
+  # 인벤토리 크기 (9의 배수)
+  size: 54
+  
+  # 아이템 설정
+  items:
+    # 배경 유리
+    background:
+      material: BLACK_STAINED_GLASS_PANE
+      display_name: ' '
+      slots:
+        - 0-8
+        - 9
+        - 17
+        - 18
+        - 26
+        - 27
+        - 35
+        - 36-44
+        - 45
+        - 53
+    
+    # 일반 가챠 (1000 아데나)
+    normal_gacha:
+      material: CHEST
+      display_name: '&a일반 가챠'
+      lore:
+        - '&7비용: &e1,000 아데나'
+        - ''
+        - '&7일반 등급 아이템이 나옵니다'
+        - '&7희귀 등급: 20% 확률'
+        - '&7에픽 등급: 1% 확률'
+        - ''
+        - '&e클릭하여 뽑기!'
+      slot: 20
+      left_click_commands:
+        - '[console] sk execute <player.name> do normalGacha(player)'
+    
+    # 고급 가챠 (5000 아데나)
+    premium_gacha:
+      material: ENDER_CHEST
+      display_name: '&5고급 가챠'
+      lore:
+        - '&7비용: &e5,000 아데나'
+        - ''
+        - '&7희귀 등급 이상 확정!'
+        - '&7에픽 등급: 5% 확률'
+        - '&7전설 등급: 0.5% 확률'
+        - ''
+        - '&e클릭하여 뽑기!'
+      slot: 24
+      left_click_commands:
+        - '[console] sk execute <player.name> do premiumGacha(player)'
+    
+    # 10연차 (9000 아데나)
+    ten_gacha:
+      material: SHULKER_BOX
+      display_name: '&6&l10연차'
+      lore:
+        - '&7비용: &e9,000 아데나'
+        - ''
+        - '&7일반 가챠 10번 뽑기'
+        - '&7할인: 1,000 아데나'
+        - '&7에픽 이상 1개 확정!'
+        - ''
+        - '&e클릭하여 뽑기!'
+      slot: 22
+      left_click_commands:
+        - '[console] sk execute <player.name> do tenGacha(player)'
+    
+    # 가챠 정보
+    info:
+      material: BOOK
+      display_name: '&e가챠 확률 정보'
+      lore:
+        - '&7=== 일반 가챠 ==='
+        - '&f일반: 79%'
+        - '&9희귀: 20%'
+        - '&5에픽: 1%'
+        - ''
+        - '&7=== 고급 가챠 ==='
+        - '&9희귀: 94.5%'
+        - '&5에픽: 5%'
+        - '&6전설: 0.5%'
+      slot: 49
+    
+    # 닫기 버튼
+    close:
+      material: BARRIER
+      display_name: '&c닫기'
+      slot: 45
+      left_click_commands:
+        - '[close]'

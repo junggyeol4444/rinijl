@@ -1,0 +1,38 @@
+# ============================================================
+# 어부 (Fisherman) 직업 설정
+# ============================================================
+Fisherman:
+  fullname: '어부'
+  description: '물고기를 잡아서 돈을 벌어요'
+  max-level: 100
+  
+  # 낚시 보상
+  Fish:
+    # 생선
+    COD:
+      income: 3.0
+      exp: 1.0
+    
+    # 연어
+    SALMON:
+      income: 5.0
+      exp: 2.0
+    
+    # 열대어
+    TROPICAL_FISH:
+      income: 8.0
+      exp: 3.0
+    
+    # 복어
+    PUFFERFISH:
+      income: 10.0
+      exp: 4.0
+    
+    # 보물
+    ENCHANTED_BOOK:
+      income: 50.0
+      exp: 20.0
+    
+    BOW:
+      income: 20.0
+      exp: 8.0

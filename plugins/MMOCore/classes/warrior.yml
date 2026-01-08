@@ -1,0 +1,190 @@
+# ============================================================
+# 워리어 (Warrior) 클래스 설정
+# 리니지 스타일 공격형 근접 딜러
+# ============================================================
+
+id: warrior
+
+display:
+  name: '&c워리어'
+  lore:
+    - '&7강력한 공격력을 가진 전사'
+    - '&7빠르고 강한 공격으로 적을 제압'
+    - ''
+    - '&e주 능력: &f공격, 근접 전투'
+    - '&e무기: &f도끼, 검'
+
+icon:
+  material: IRON_AXE
+  name: '&c워리어 (Warrior)'
+
+# ============================================================
+# 기본 스탯
+# ============================================================
+stats:
+  max-health:
+    base: 80
+    per-level: 4
+    # 기사보다 낮은 체력
+  
+  max-mana:
+    base: 40
+    per-level: 1
+  
+  max-stamina:
+    base: 60
+    per-level: 1.5
+  
+  attack-damage:
+    base: 12
+    per-level: 2
+    # 높은 공격력
+  
+  defense:
+    base: 5
+    per-level: 1
+    # 낮은 방어력
+  
+  movement-speed:
+    base: 0.12
+    per-level: 0.002
+    # 빠른 이동속도
+
+# ============================================================
+# 스탯 포인트 분배
+# ============================================================
+attributes:
+  strength:
+    name: '&c힘'
+    max: 99
+    effects:
+      - 'attack-damage:1'
+      # 힘 1당 공격력 +1 (높음)
+  
+  vitality:
+    name: '&4체력'
+    max: 99
+    effects:
+      - 'max-health:1.5'
+      - 'defense:0.2'
+  
+  dexterity:
+    name: '&a민첩'
+    max: 99
+    effects:
+      - 'attack-speed:0.015'
+      - 'movement-speed:0.001'
+  
+  intelligence:
+    name: '&9지능'
+    max: 99
+    effects:
+      - 'max-mana:0.5'
+
+# ============================================================
+# 스킬 목록
+# ============================================================
+skills:
+  # 스킬 1: 회전 베기
+  whirlwind:
+    name: '&e회전 베기'
+    max-level: 10
+    material: DIAMOND_AXE
+    lore:
+      - '&7주변의 모든 적에게 데미지를 입힙니다'
+      - ''
+      - '&e쿨다운: &f12초'
+      - '&e스태미나 소모: &f30'
+    unlock-level: 1
+  
+  # 스킬 2: 분노
+  rage:
+    name: '&e분노'
+    max-level: 10
+    material: REDSTONE
+    lore:
+      - '&7일시적으로 공격력이 증가합니다'
+      - ''
+      - '&e쿨다운: &f30초'
+      - '&e스태미나 소모: &f40'
+    unlock-level: 10
+  
+  # 스킬 3: 돌진
+  charge:
+    name: '&e돌진'
+    max-level: 10
+    material: FEATHER
+    lore:
+      - '&7앞으로 빠르게 돌진하며 데미지를 입힙니다'
+      - ''
+      - '&e쿨다운: &f15초'
+      - '&e스태미나 소모: &f25'
+    unlock-level: 20
+  
+  # 스킬 4: 광전사
+  berserker:
+    name: '&e광전사'
+    max-level: 5
+    material: BLAZE_POWDER
+    lore:
+      - '&7체력이 낮을수록 공격력이 증가합니다'
+      - '&7패시브 스킬'
+      - ''
+      - '&e마나 소모: &f없음'
+    unlock-level: 50
+
+# ============================================================
+# 전직 옵션
+# ============================================================
+subclass:
+  min-level: 50
+  options: []
+
+# ============================================================
+# 장비 제한
+# ============================================================
+equipment:
+  weapons:
+    - WOODEN_SWORD
+    - STONE_SWORD
+    - IRON_SWORD
+    - GOLDEN_SWORD
+    - DIAMOND_SWORD
+    - NETHERITE_SWORD
+    - WOODEN_AXE
+    - STONE_AXE
+    - IRON_AXE
+    - GOLDEN_AXE
+    - DIAMOND_AXE
+    - NETHERITE_AXE
+  
+  armor:
+    - LEATHER_HELMET
+    - LEATHER_CHESTPLATE
+    - LEATHER_LEGGINGS
+    - LEATHER_BOOTS
+    - CHAINMAIL_HELMET
+    - CHAINMAIL_CHESTPLATE
+    - CHAINMAIL_LEGGINGS
+    - CHAINMAIL_BOOTS
+    - IRON_HELMET
+    - IRON_CHESTPLATE
+    - IRON_LEGGINGS
+    - IRON_BOOTS
+    - DIAMOND_HELMET
+    - DIAMOND_CHESTPLATE
+    - DIAMOND_LEGGINGS
+    - DIAMOND_BOOTS
+    - NETHERITE_HELMET
+    - NETHERITE_CHESTPLATE
+    - NETHERITE_LEGGINGS
+    - NETHERITE_BOOTS
+
+# ============================================================
+# 경험치 보너스
+# ============================================================
+exp-sources:
+  mob: 1.1
+  # 몹 사냥 시 10% 보너스
+  pvp: 1.0
+  quest: 1.0

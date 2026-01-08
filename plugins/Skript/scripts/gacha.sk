@@ -1,0 +1,158 @@
+# ============================================================
+# 가챠 시스템 스크립트
+# /가챠 명령어로 실행, 1% 에픽 확률 등
+# DeluxeMenus GUI와 연동
+# ============================================================
+
+# ============================================================
+# 가챠 명령어 - GUI 열기
+# ============================================================
+command /가챠:
+	aliases: /gacha
+	trigger:
+		# DeluxeMenus GUI 열기
+		# 주의: DeluxeMenus 버전에 따라 명령어가 다를 수 있습니다
+		# 대안: /deluxemenus open gacha_menu 또는 /dmenu open gacha_menu
+		execute player command "dm open gacha_menu"
+		play sound "block.chest.open" to player
+
+# ============================================================
+# 일반 가챠 함수 (1000 아데나)
+# ============================================================
+function normalGacha(p: player):
+	# 비용 확인
+	if balance of {_p} >= 1000:
+		# 돈 차감
+		remove 1000 from balance of {_p}
+		
+		# 확률 계산 (1-100)
+		set {_random} to random integer between 1 and 100
+		
+		# 에픽 등급 (1% 확률)
+		if {_random} <= 1:
+			send "&5&l★ 에픽 등급! ★" to {_p}
+			play sound "entity.player.levelup" to {_p}
+			give {_p} diamond sword of sharpness 5 named "&5에픽 검"
+			
+		# 희귀 등급 (20% 확률)
+		else if {_random} <= 21:
+			send "&9&l★ 희귀 등급!" to {_p}
+			play sound "entity.experience_orb.pickup" to {_p}
+			give {_p} iron sword of sharpness 3 named "&9희귀 검"
+			
+		# 일반 등급 (79% 확률)
+		else:
+			send "&f일반 등급" to {_p}
+			play sound "entity.item.pickup" to {_p}
+			give {_p} stone sword named "&f일반 검"
+		
+		send "&a가챠를 뽑았습니다! (비용: 1,000 아데나)" to {_p}
+	else:
+		send "&c아데나가 부족합니다! (필요: 1,000 아데나)" to {_p}
+		play sound "entity.villager.no" to {_p}
+
+# ============================================================
+# 고급 가챠 함수 (5000 아데나)
+# ============================================================
+function premiumGacha(p: player):
+	# 비용 확인
+	if balance of {_p} >= 5000:
+		# 돈 차감
+		remove 5000 from balance of {_p}
+		
+		# 확률 계산
+		set {_random} to random integer between 1 and 1000
+		
+		# 전설 등급 (0.5% 확률)
+		if {_random} <= 5:
+			send "&6&l★★★ 전설 등급! ★★★" to {_p}
+			play sound "ui.toast.challenge_complete" to {_p}
+			give {_p} netherite sword of sharpness 7 named "&6전설의 검" with lore "&7전설적인 무기"
+			broadcast "&6&l[전설] &e%{_p}%님이 전설 등급 아이템을 획득했습니다!"
+			
+		# 에픽 등급 (5% 확률)
+		else if {_random} <= 55:
+			send "&5&l★★ 에픽 등급! ★★" to {_p}
+			play sound "entity.player.levelup" to {_p}
+			give {_p} diamond sword of sharpness 6 named "&5에픽 검+"
+			
+		# 희귀 등급 (94.5% 확률)
+		else:
+			send "&9&l★ 희귀 등급!" to {_p}
+			play sound "entity.experience_orb.pickup" to {_p}
+			give {_p} iron sword of sharpness 4 named "&9희귀 검+"
+		
+		send "&a고급 가챠를 뽑았습니다! (비용: 5,000 아데나)" to {_p}
+	else:
+		send "&c아데나가 부족합니다! (필요: 5,000 아데나)" to {_p}
+		play sound "entity.villager.no" to {_p}
+
+# ============================================================
+# 10연차 함수 (9000 아데나, 에픽 1개 확정)
+# ============================================================
+function tenGacha(p: player):
+	# 비용 확인
+	if balance of {_p} >= 9000:
+		# 돈 차감
+		remove 9000 from balance of {_p}
+		
+		send "&e&l10연차를 시작합니다!" to {_p}
+		send "&7에픽 이상 1개 확정!" to {_p}
+		
+		# 에픽 확정 1개
+		set {_epic_given} to false
+		
+		# 10번 반복
+		loop 10 times:
+			wait 5 ticks
+			
+			# 마지막 한 번은 에픽 확정 (아직 나오지 않았다면)
+			if loop-number is 10 and {_epic_given} is false:
+				# 에픽 확정
+				send "&5&l★ [%loop-number%/10] 에픽 등급! ★" to {_p}
+				play sound "entity.player.levelup" to {_p}
+				give {_p} diamond sword of sharpness 5 named "&5에픽 검"
+				set {_epic_given} to true
+			else:
+				# 일반 확률 (1~9번째)
+				set {_random} to random integer between 1 and 100
+				
+				# 에픽 (1% 확률)
+				if {_random} <= 1:
+					send "&5&l★ [%loop-number%/10] 에픽 등급! ★" to {_p}
+					play sound "entity.player.levelup" to {_p}
+					give {_p} diamond sword of sharpness 5 named "&5에픽 검"
+					set {_epic_given} to true
+					
+				# 희귀 (20% 확률)
+				else if {_random} <= 21:
+					send "&9&l★ [%loop-number%/10] 희귀 등급!" to {_p}
+					give {_p} iron sword of sharpness 3 named "&9희귀 검"
+					
+				# 일반 (79% 확률)
+				else:
+					send "&f[%loop-number%/10] 일반 등급" to {_p}
+					give {_p} stone sword named "&f일반 검"
+		
+		wait 1 second
+		send "&a&l10연차 완료! (비용: 9,000 아데나)" to {_p}
+		play sound "ui.toast.challenge_complete" to {_p}
+	else:
+		send "&c아데나가 부족합니다! (필요: 9,000 아데나)" to {_p}
+		play sound "entity.villager.no" to {_p}
+
+# ============================================================
+# 가챠 통계 확인 명령어
+# ============================================================
+command /가챠통계:
+	aliases: /gachastats
+	trigger:
+		send "&e=== 가챠 통계 ===" to player
+		send "&f일반 가챠: 1,000 아데나" to player
+		send "&7 - 일반: 79%% | 희귀: 20%% | 에픽: 1%%" to player
+		send "" to player
+		send "&5고급 가챠: 5,000 아데나" to player
+		send "&7 - 희귀: 94.5%% | 에픽: 5%% | 전설: 0.5%%" to player
+		send "" to player
+		send "&610연차: 9,000 아데나 (1,000 할인)" to player
+		send "&7 - 에픽 이상 1개 확정!" to player
