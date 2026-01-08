@@ -50,16 +50,17 @@ command /랭킹 [<text>]:
 			send "&6&l  PvP 킬 랭킹 Top 10" to player
 			send "&e&l━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
 			
-			# 모든 플레이어의 킬 수를 리스트로 만들기
+			# 모든 플레이어의 킬 수를 임시 리스트로 복사
 			set {_rank} to 1
-			set {_list::*} to {kills::*}
+			loop {kills::*}:
+				set {_temp.kills::%loop-index%} to loop-value
 			
-			# 상위 10명 정렬 및 표시 (간단한 방식)
+			# 상위 10명 정렬 및 표시 (임시 리스트 사용)
 			loop 10 times:
 				set {_max} to 0
 				set {_max_player} to ""
 				
-				loop {kills::*}:
+				loop {_temp.kills::*}:
 					if loop-value > {_max}:
 						set {_max} to loop-value
 						set {_max_player} to loop-index
@@ -75,8 +76,8 @@ command /랭킹 [<text>]:
 					else:
 						send "&7  %{_rank}%위: &e%{_max_player}% &7- &c%{_max}% 킬" to player
 					
-					# 표시한 플레이어는 목록에서 제거
-					delete {kills::%{_max_player}%}
+					# 임시 목록에서만 제거 (원본 데이터는 유지)
+					delete {_temp.kills::%{_max_player}%}
 					add 1 to {_rank}
 			
 			send "&e&l━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
@@ -89,13 +90,16 @@ command /랭킹 [<text>]:
 			send "&6&l  몹 킬 랭킹 Top 10" to player
 			send "&e&l━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
 			
+			# 임시 리스트로 복사
 			set {_rank} to 1
+			loop {mob.kills::*}:
+				set {_temp.mob.kills::%loop-index%} to loop-value
 			
 			loop 10 times:
 				set {_max} to 0
 				set {_max_player} to ""
 				
-				loop {mob.kills::*}:
+				loop {_temp.mob.kills::*}:
 					if loop-value > {_max}:
 						set {_max} to loop-value
 						set {_max_player} to loop-index
@@ -110,7 +114,8 @@ command /랭킹 [<text>]:
 					else:
 						send "&7  %{_rank}%위: &e%{_max_player}% &7- &c%{_max}% 킬" to player
 					
-					delete {mob.kills::%{_max_player}%}
+					# 임시 목록에서만 제거 (원본 데이터는 유지)
+					delete {_temp.mob.kills::%{_max_player}%}
 					add 1 to {_rank}
 			
 			send "&e&l━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
