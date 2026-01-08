@@ -1,0 +1,193 @@
+# ============================================================
+# 요정 (Elf) 클래스 설정
+# 리니지 스타일 궁수/서포터 하이브리드
+# ============================================================
+
+id: elf
+
+display:
+  name: '&a요정'
+  lore:
+    - '&7민첩하고 정확한 궁수'
+    - '&7원거리 공격과 치유 마법을 사용'
+    - ''
+    - '&e주 능력: &f원거리 공격, 치유'
+    - '&e무기: &f활, 단검'
+
+icon:
+  material: BOW
+  name: '&a요정 (Elf)'
+
+# ============================================================
+# 기본 스탯
+# ============================================================
+stats:
+  max-health:
+    base: 70
+    per-level: 3
+    # 중간 체력
+  
+  max-mana:
+    base: 100
+    per-level: 3
+    # 중간 마나
+  
+  max-stamina:
+    base: 80
+    per-level: 2
+    # 높은 스태미나
+  
+  attack-damage:
+    base: 10
+    per-level: 1.5
+    # 중간 공격력
+  
+  defense:
+    base: 4
+    per-level: 0.8
+    # 낮은 방어력
+  
+  movement-speed:
+    base: 0.13
+    per-level: 0.003
+    # 매우 빠른 이동속도
+
+# ============================================================
+# 스탯 포인트 분배
+# ============================================================
+attributes:
+  strength:
+    name: '&c힘'
+    max: 99
+    effects:
+      - 'attack-damage:0.5'
+  
+  vitality:
+    name: '&4체력'
+    max: 99
+    effects:
+      - 'max-health:1.5'
+      - 'defense:0.2'
+  
+  dexterity:
+    name: '&a민첩'
+    max: 99
+    effects:
+      - 'attack-speed:0.02'
+      - 'movement-speed:0.002'
+      - 'attack-damage:0.3'
+      # 민첩이 공격력에도 영향
+  
+  intelligence:
+    name: '&9지능'
+    max: 99
+    effects:
+      - 'max-mana:2'
+      - 'magic-damage:0.3'
+
+# ============================================================
+# 스킬 목록
+# ============================================================
+skills:
+  # 스킬 1: 연발 사격
+  rapid_shot:
+    name: '&e연발 사격'
+    max-level: 10
+    material: ARROW
+    lore:
+      - '&7빠르게 여러 발의 화살을 발사합니다'
+      - ''
+      - '&e쿨다운: &f10초'
+      - '&e스태미나 소모: &f30'
+    unlock-level: 1
+  
+  # 스킬 2: 치유의 빛
+  healing_light:
+    name: '&e치유의 빛'
+    max-level: 10
+    material: GLOWSTONE_DUST
+    lore:
+      - '&7자신과 주변 아군을 치유합니다'
+      - ''
+      - '&e쿨다운: &f15초'
+      - '&e마나 소모: &f40'
+    unlock-level: 10
+  
+  # 스킬 3: 속박의 화살
+  binding_arrow:
+    name: '&e속박의 화살'
+    max-level: 10
+    material: COBWEB
+    lore:
+      - '&7적을 속박하여 움직이지 못하게 합니다'
+      - ''
+      - '&e쿨다운: &f20초'
+      - '&e스태미나 소모: &f35'
+    unlock-level: 20
+  
+  # 스킬 4: 은신
+  stealth:
+    name: '&e은신'
+    max-level: 5
+    material: GLASS
+    lore:
+      - '&7투명화되어 적에게 발각되지 않습니다'
+      - ''
+      - '&e쿨다운: &f40초'
+      - '&e마나 소모: &f50'
+    unlock-level: 40
+  
+  # 스킬 5: 정령 소환
+  spirit_summon:
+    name: '&e정령 소환'
+    max-level: 5
+    material: TOTEM_OF_UNDYING
+    lore:
+      - '&7정령을 소환하여 함께 전투합니다'
+      - ''
+      - '&e쿨다운: &f120초'
+      - '&e마나 소모: &f80'
+    unlock-level: 50
+
+# ============================================================
+# 전직 옵션
+# ============================================================
+subclass:
+  min-level: 50
+  options: []
+
+# ============================================================
+# 장비 제한
+# ============================================================
+equipment:
+  weapons:
+    - BOW
+    - CROSSBOW
+    - WOODEN_SWORD
+    - STONE_SWORD
+    - IRON_SWORD
+    # 활과 단검 계열
+  
+  armor:
+    - LEATHER_HELMET
+    - LEATHER_CHESTPLATE
+    - LEATHER_LEGGINGS
+    - LEATHER_BOOTS
+    - CHAINMAIL_HELMET
+    - CHAINMAIL_CHESTPLATE
+    - CHAINMAIL_LEGGINGS
+    - CHAINMAIL_BOOTS
+    - IRON_HELMET
+    - IRON_CHESTPLATE
+    - IRON_LEGGINGS
+    - IRON_BOOTS
+    # 가볍고 중간 방어구
+
+# ============================================================
+# 경험치 보너스
+# ============================================================
+exp-sources:
+  mob: 1.0
+  pvp: 1.0
+  quest: 1.1
+  # 퀘스트 경험치 10% 보너스

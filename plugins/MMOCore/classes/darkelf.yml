@@ -1,0 +1,211 @@
+# ============================================================
+# 다크엘프 (Dark Elf) 클래스 설정
+# 리니지 스타일 암살자/마법 딜러 하이브리드
+# ============================================================
+
+id: darkelf
+
+display:
+  name: '&5다크엘프'
+  lore:
+    - '&7어둠의 힘을 다루는 암살자'
+    - '&7은밀한 공격과 암흑 마법을 사용'
+    - ''
+    - '&e주 능력: &f암살, 암흑 마법'
+    - '&e무기: &f단검, 마법'
+
+icon:
+  material: NETHERITE_SWORD
+  name: '&5다크엘프 (Dark Elf)'
+
+# ============================================================
+# 기본 스탯
+# ============================================================
+stats:
+  max-health:
+    base: 65
+    per-level: 2.5
+    # 낮은 체력
+  
+  max-mana:
+    base: 120
+    per-level: 4
+    # 높은 마나
+  
+  max-stamina:
+    base: 70
+    per-level: 1.5
+  
+  attack-damage:
+    base: 11
+    per-level: 2
+    # 높은 공격력
+  
+  magic-damage:
+    base: 10
+    per-level: 2
+    # 중간 마법 공격력
+  
+  defense:
+    base: 4
+    per-level: 0.6
+    # 낮은 방어력
+  
+  movement-speed:
+    base: 0.14
+    per-level: 0.003
+    # 가장 빠른 이동속도
+  
+  critical-chance:
+    base: 10
+    per-level: 0.5
+    # 높은 크리티컬 확률
+
+# ============================================================
+# 스탯 포인트 분배
+# ============================================================
+attributes:
+  strength:
+    name: '&c힘'
+    max: 99
+    effects:
+      - 'attack-damage:0.7'
+      - 'critical-damage:0.5'
+  
+  vitality:
+    name: '&4체력'
+    max: 99
+    effects:
+      - 'max-health:1.2'
+      - 'defense:0.15'
+  
+  dexterity:
+    name: '&a민첩'
+    max: 99
+    effects:
+      - 'attack-speed:0.02'
+      - 'movement-speed:0.003'
+      - 'critical-chance:0.2'
+      # 민첩이 크리티컬 확률에 영향
+  
+  intelligence:
+    name: '&9지능'
+    max: 99
+    effects:
+      - 'max-mana:2.5'
+      - 'magic-damage:0.4'
+
+# ============================================================
+# 스킬 목록
+# ============================================================
+skills:
+  # 스킬 1: 암살
+  assassination:
+    name: '&e암살'
+    max-level: 10
+    material: IRON_SWORD
+    lore:
+      - '&7뒤에서 치명적인 일격을 가합니다'
+      - '&7백어택 시 데미지 2배'
+      - ''
+      - '&e쿨다운: &f10초'
+      - '&e스태미나 소모: &f35'
+    unlock-level: 1
+  
+  # 스킬 2: 독 살포
+  poison_spray:
+    name: '&e독 살포'
+    max-level: 10
+    material: SPIDER_EYE
+    lore:
+      - '&7적에게 독을 퍼뜨려 지속 피해를 입힙니다'
+      - ''
+      - '&e쿨다운: &f12초'
+      - '&e마나 소모: &f30'
+    unlock-level: 10
+  
+  # 스킬 3: 그림자 이동
+  shadow_step:
+    name: '&e그림자 이동'
+    max-level: 10
+    material: ENDER_PEARL
+    lore:
+      - '&7그림자를 이용해 빠르게 이동합니다'
+      - ''
+      - '&e쿨다운: &f15초'
+      - '&e마나 소모: &f40'
+    unlock-level: 20
+  
+  # 스킬 4: 어둠의 장막
+  dark_veil:
+    name: '&e어둠의 장막'
+    max-level: 5
+    material: BLACK_WOOL
+    lore:
+      - '&7주변에 어둠을 펼쳐 적을 무력화합니다'
+      - ''
+      - '&e쿨다운: &f30초'
+      - '&e마나 소모: &f50'
+    unlock-level: 30
+  
+  # 스킬 5: 죽음의 무도
+  dance_of_death:
+    name: '&e죽음의 무도'
+    max-level: 5
+    material: GHAST_TEAR
+    lore:
+      - '&7주변의 모든 적에게 암흑 피해를 입힙니다'
+      - '&7궁극 스킬'
+      - ''
+      - '&e쿨다운: &f90초'
+      - '&e마나 소모: &f100'
+    unlock-level: 50
+
+# ============================================================
+# 전직 옵션
+# ============================================================
+subclass:
+  min-level: 50
+  options: []
+
+# ============================================================
+# 장비 제한
+# ============================================================
+equipment:
+  weapons:
+    - WOODEN_SWORD
+    - STONE_SWORD
+    - IRON_SWORD
+    - GOLDEN_SWORD
+    - DIAMOND_SWORD
+    - NETHERITE_SWORD
+    - BOW
+    - CROSSBOW
+    # 단검과 활 계열
+  
+  armor:
+    - LEATHER_HELMET
+    - LEATHER_CHESTPLATE
+    - LEATHER_LEGGINGS
+    - LEATHER_BOOTS
+    - CHAINMAIL_HELMET
+    - CHAINMAIL_CHESTPLATE
+    - CHAINMAIL_LEGGINGS
+    - CHAINMAIL_BOOTS
+    # 가벼운 방어구만
+
+# ============================================================
+# 경험치 보너스
+# ============================================================
+exp-sources:
+  mob: 1.0
+  pvp: 1.2
+  # PvP 경험치 20% 보너스
+  quest: 1.0
+
+# ============================================================
+# 특수 능력
+# ============================================================
+# 야간 시야 (밤에 더 잘 보임)
+# 은신 시 이동속도 증가
+# 크리티컬 데미지 배율 높음
