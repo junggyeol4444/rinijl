@@ -19,6 +19,9 @@ on load:
 every 1 second:
 	loop all players:
 		# AFK 존에 있는지 확인 (WorldGuard 지역 확인)
+		# 주의: WorldGuard Skript 애드온에 따라 문법이 다를 수 있습니다
+		# 대안: if player is in region "afk_zone"
+		# 또는: if loop-player is in region "afk_zone" of world "world"
 		if region at loop-player contains "afk_zone":
 			# 움직임 감지
 			if {last.location::%loop-player%} is location of loop-player:

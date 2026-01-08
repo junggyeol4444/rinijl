@@ -29,6 +29,8 @@ every 30 minutes:
 on death of mob:
 	if attacker is a player:
 		# AFK 존에 있는지 확인
+		# 주의: WorldGuard Skript 애드온 문법 확인 필요
+		# 대안: if attacker is in region "afk_zone"
 		if region at attacker contains "afk_zone":
 			# 플레이어의 혈맹 확인
 			# 실제로는 Factions API 사용

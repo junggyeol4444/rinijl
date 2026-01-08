@@ -10,6 +10,9 @@
 command /가챠:
 	aliases: /gacha
 	trigger:
+		# DeluxeMenus GUI 열기
+		# 주의: DeluxeMenus 버전에 따라 명령어가 다를 수 있습니다
+		# 대안: /deluxemenus open gacha_menu 또는 /dmenu open gacha_menu
 		execute player command "dm open gacha_menu"
 		play sound "block.chest.open" to player
 
