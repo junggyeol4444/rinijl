@@ -103,35 +103,33 @@ function tenGacha(p: player):
 		loop 10 times:
 			wait 5 ticks
 			
-			# 마지막 한 번은 에픽 확정
-			if loop-number is 10:
-				if {_epic_given} is false:
-					# 에픽 확정
-					send "&5&l★ [%loop-number%/10] 에픽 등급! ★" to {_p}
-					play sound "entity.player.levelup" to {_p}
-					give {_p} diamond sword of sharpness 5 named "&5에픽 검"
-					set {_epic_given} to true
-					stop
-			
-			# 일반 확률
-			set {_random} to random integer between 1 and 100
-			
-			# 에픽 (1% 확률)
-			if {_random} <= 1:
+			# 마지막 한 번은 에픽 확정 (아직 나오지 않았다면)
+			if loop-number is 10 and {_epic_given} is false:
+				# 에픽 확정
 				send "&5&l★ [%loop-number%/10] 에픽 등급! ★" to {_p}
 				play sound "entity.player.levelup" to {_p}
 				give {_p} diamond sword of sharpness 5 named "&5에픽 검"
 				set {_epic_given} to true
-				
-			# 희귀 (20% 확률)
-			else if {_random} <= 21:
-				send "&9&l★ [%loop-number%/10] 희귀 등급!" to {_p}
-				give {_p} iron sword of sharpness 3 named "&9희귀 검"
-				
-			# 일반 (79% 확률)
 			else:
-				send "&f[%loop-number%/10] 일반 등급" to {_p}
-				give {_p} stone sword named "&f일반 검"
+				# 일반 확률 (1~9번째)
+				set {_random} to random integer between 1 and 100
+				
+				# 에픽 (1% 확률)
+				if {_random} <= 1:
+					send "&5&l★ [%loop-number%/10] 에픽 등급! ★" to {_p}
+					play sound "entity.player.levelup" to {_p}
+					give {_p} diamond sword of sharpness 5 named "&5에픽 검"
+					set {_epic_given} to true
+					
+				# 희귀 (20% 확률)
+				else if {_random} <= 21:
+					send "&9&l★ [%loop-number%/10] 희귀 등급!" to {_p}
+					give {_p} iron sword of sharpness 3 named "&9희귀 검"
+					
+				# 일반 (79% 확률)
+				else:
+					send "&f[%loop-number%/10] 일반 등급" to {_p}
+					give {_p} stone sword named "&f일반 검"
 		
 		wait 1 second
 		send "&a&l10연차 완료! (비용: 9,000 아데나)" to {_p}

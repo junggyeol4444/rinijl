@@ -141,6 +141,26 @@ command /강화:
 				# 강화 수치 감소
 				if {_enchant_level} > 0:
 					remove 1 from {_enchant_level}
+					
+					# 감소된 레벨로 아이템 업데이트
+					set {_degraded_item} to {_item}
+					if {_enchant_level} > 0:
+						# 강화 수치가 남아있으면 업데이트
+						set {_color} to "&a"
+						if {_enchant_level} >= 8:
+							set {_color} to "&5"
+						if {_enchant_level} >= 11:
+							set {_color} to "&6"
+						
+						set name of {_degraded_item} to "%{_color}%+%{_enchant_level}% %type of {_item}%"
+						clear lore of {_degraded_item}
+						add "&e강화: +%{_enchant_level}%" to lore of {_degraded_item}
+						add "&7공격력 +%{_enchant_level} * 2%" to lore of {_degraded_item}
+						set player's tool to {_degraded_item}
+					else:
+						# 강화 수치가 0이 되면 원본으로 복구
+						set player's tool to {_degraded_item}
+					
 					send "&c강화 수치가 1 감소했습니다. (현재: +%{_enchant_level}%)" to player
 				else:
 					send "&c아이템은 유지되었습니다." to player
