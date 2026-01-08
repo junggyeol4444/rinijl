@@ -1,0 +1,112 @@
+# ============================================================
+# 웨어울프 (Werewolf) 몹 설정
+# 리니지 스타일 고급 야수 - 빠르고 치명적
+# ============================================================
+
+werewolf:
+  # 몹 타입
+  Type: WOLF
+  
+  # 표시 이름
+  Display: '&8웨어울프 &7[Lv.30]'
+  
+  # 체력
+  Health: 180
+  
+  # 공격력
+  Damage: 15
+  
+  # 이동 속도 (매우 빠름)
+  MovementSpeed: 0.35
+  
+  # ============================================================
+  # 장비 설정 (늑대는 장비 착용 불가, 스탯으로 보정)
+  # ============================================================
+  # 장비 없음 (늑대 타입)
+  
+  # ============================================================
+  # 드랍 아이템 설정
+  # ============================================================
+  Drops:
+    # 아데나 드랍
+    - money{amount=120-250} 1.0
+    # 120~250 아데나
+    
+    # 아이템 드랍
+    - LEATHER 0.6
+    - STRING 0.5
+    - BONE 0.4
+    - DIAMOND{display="&8웨어울프의 발톱";lore="&7날카로운 발톱"} 0.05
+    # 희귀 드랍 5%
+    - EMERALD 0.03
+  
+  # ============================================================
+  # 경험치 설정
+  # ============================================================
+  Options:
+    MMOCoreExp: 60
+    # 60 경험치
+    Level: 30
+    AlwaysShowName: true
+    NameplateHeight: 0.3
+    PreventSunburn: true
+    PreventOtherDrops: true
+    
+    # 높은 넉백 저항
+    KnockbackResistance: 0.3
+    
+    # 분노 상태 (항상 적대적)
+    Angry: true
+  
+  # ============================================================
+  # AI 설정
+  # ============================================================
+  AIGoalSelectors:
+    - clear
+    - meleeattack
+    - leapattarget{speed=1.5}
+    # 점프 공격
+    - randomstroll
+    - float
+  
+  AITargetSelectors:
+    - clear
+    - players
+    - attacker
+  
+  # ============================================================
+  # 스킬 설정
+  # ============================================================
+  Skills:
+    # 전투 시작 시 울부짖음
+    - message{m="&8웨어울프: 아우우우~~~!"} @PlayersInRadius{r=20} ~onCombat
+    - sound{s=ENTITY_WOLF_HOWL;v=2;p=0.8} @self ~onCombat
+    
+    # 돌진 공격 (50% 확률)
+    - teleport{l=forward;d=3} @self ~onAttack 0.5
+    - damage{a=20} @target ~onAttack 0.5
+    - effect:SLOW{d=60;l=2} @target ~onAttack 0.5
+    
+    # 밤에 더 강력함 (야간 버프)
+    - effect:INCREASE_DAMAGE{d=9999;l=1} @self ~onTimer:100 night
+    - effect:SPEED{d=9999;l=1} @self ~onTimer:100 night
+    
+    # 출혈 공격
+    - effect:WITHER{d=100;l=1} @target ~onAttack 0.3
+    - message{m="&c출혈 상태!"} @target ~onAttack 0.3
+    
+    # 체력 50% 이하일 때 광폭화
+    - effect:INCREASE_DAMAGE{d=200;l=2} @self ~onDamaged 0.3 >50%
+    - effect:SPEED{d=200;l=2} @self ~onDamaged 0.3 >50%
+    - message{m="&c웨어울프가 광폭화했다!"} @PlayersInRadius{r=20} ~onDamaged 0.3 >50%
+    
+    # 무리 소환 (20% 확률, 체력 30% 이하)
+    - summon{m=WOLF;a=2;y=0} @self ~onDamaged 0.2 >70%
+    - message{m="&8웨어울프가 무리를 불렀다!"} @PlayersInRadius{r=20} ~onDamaged 0.2 >70%
+  
+  # ============================================================
+  # 파티클 효과
+  # ============================================================
+  Particles:
+    - effect:REDSTONE{c=8B0000;s=1} @self ~onTimer:60
+    # 붉은 파티클 (야수성)

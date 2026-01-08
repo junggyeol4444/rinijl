@@ -1,0 +1,111 @@
+# ============================================================
+# AFK 자동사냥 시스템 스크립트
+# 플레이어가 AFK 상태일 때 자동으로 몹을 스폰하고 사냥
+# 24시간 제한 포함
+# ============================================================
+
+# ============================================================
+# 변수 초기화
+# ============================================================
+on load:
+	# AFK 시간 추적용 변수 초기화 (분 단위)
+	# {afk.time::%player%} - 플레이어의 AFK 시간
+	# {afk.hunting::%player%} - AFK 사냥 활성화 여부
+	# {afk.daily.time::%player%} - 오늘 사용한 AFK 시간
+
+# ============================================================
+# AFK 상태 감지 (5분간 움직임 없으면 AFK)
+# ============================================================
+every 1 second:
+	loop all players:
+		# AFK 존에 있는지 확인 (WorldGuard 지역 확인)
+		if region at loop-player contains "afk_zone":
+			# 움직임 감지
+			if {last.location::%loop-player%} is location of loop-player:
+				# 같은 위치 = 움직이지 않음
+				add 1 to {afk.counter::%loop-player%}
+				
+				# 5분(300초) 이상 움직이지 않으면 AFK 시작
+				if {afk.counter::%loop-player%} >= 300:
+					if {afk.hunting::%loop-player%} is not set:
+						# AFK 사냥 시작
+						set {afk.hunting::%loop-player%} to true
+						send "&a[AFK 사냥] 자동 사냥이 시작되었습니다!" to loop-player
+						play sound "entity.experience_orb.pickup" to loop-player
+			else:
+				# 움직였으면 카운터 리셋
+				set {afk.counter::%loop-player%} to 0
+				if {afk.hunting::%loop-player%} is true:
+					# AFK 사냥 종료
+					delete {afk.hunting::%loop-player%}
+					send "&c[AFK 사냥] 움직여서 자동 사냥이 종료되었습니다." to loop-player
+			
+			# 현재 위치 저장
+			set {last.location::%loop-player%} to location of loop-player
+
+# ============================================================
+# AFK 사냥 중 몹 자동 스폰 (5초마다)
+# ============================================================
+every 5 seconds:
+	loop all players:
+		if {afk.hunting::%loop-player%} is true:
+			# 일일 사용 시간 확인 (24시간 = 1440분)
+			if {afk.daily.time::%loop-player%} is not set:
+				set {afk.daily.time::%loop-player%} to 0
+			
+			# 24시간 제한 체크
+			if {afk.daily.time::%loop-player%} >= 1440:
+				send "&c[AFK 사냥] 오늘의 AFK 사냥 시간을 모두 사용했습니다!" to loop-player
+				delete {afk.hunting::%loop-player%}
+				stop
+			
+			# AFK 시간 증가 (5초 = 1/12분)
+			add 0.0833 to {afk.daily.time::%loop-player%}
+			
+			# 플레이어 주변에 몹 스폰 (반경 10블록 내)
+			set {_loc} to location of loop-player
+			add 1 to x-coordinate of {_loc}
+			add random integer between -10 and 10 to x-coordinate of {_loc}
+			add random integer between -10 and 10 to z-coordinate of {_loc}
+			
+			# 랜덤 몹 선택 (오크, 좀비, 스켈레톤 등)
+			set {_random} to random integer between 1 and 5
+			if {_random} is 1:
+				execute console command "mm mobs spawn orc 1 %world of loop-player%,%x-coordinate of {_loc}%,%y-coordinate of {_loc}%,%z-coordinate of {_loc}%"
+			else if {_random} is 2:
+				execute console command "mm mobs spawn skeleton_soldier 1 %world of loop-player%,%x-coordinate of {_loc}%,%y-coordinate of {_loc}%,%z-coordinate of {_loc}%"
+			else:
+				spawn 1 zombie at {_loc}
+
+# ============================================================
+# 일일 AFK 시간 리셋 (매일 자정)
+# ============================================================
+every 1 day:
+	loop all players:
+		delete {afk.daily.time::%loop-player%}
+	broadcast "&e[AFK 사냥] 일일 AFK 시간이 초기화되었습니다!"
+
+# ============================================================
+# AFK 상태 확인 명령어
+# ============================================================
+command /afk시간:
+	trigger:
+		if {afk.daily.time::%player%} is set:
+			set {_time} to {afk.daily.time::%player%}
+			set {_hours} to floor({_time} / 60)
+			set {_minutes} to floor({_time} - ({_hours} * 60))
+			send "&e[AFK 사냥] 오늘 사용한 시간: &a%{_hours}%시간 %{_minutes}%분 &7/ 24시간" to player
+			set {_remaining} to 1440 - {_time}
+			set {_rem_hours} to floor({_remaining} / 60)
+			set {_rem_minutes} to floor({_remaining} - ({_rem_hours} * 60))
+			send "&e남은 시간: &a%{_rem_hours}%시간 %{_rem_minutes}%분" to player
+		else:
+			send "&e[AFK 사냥] 오늘 아직 사용하지 않았습니다. (남은 시간: 24시간)" to player
+
+# ============================================================
+# 플레이어 퇴장 시 AFK 상태 해제
+# ============================================================
+on quit:
+	delete {afk.hunting::%player%}
+	delete {afk.counter::%player%}
+	delete {last.location::%player%}

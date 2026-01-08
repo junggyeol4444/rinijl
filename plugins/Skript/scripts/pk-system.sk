@@ -1,0 +1,175 @@
+# ============================================================
+# PK 시스템 스크립트
+# PK 시 일정 확률로 강화된 아이템 드랍
+# ============================================================
+
+# ============================================================
+# 변수 초기화
+# ============================================================
+on load:
+	# {pk.count::%player%} - 플레이어의 PK 횟수
+	# {pk.status::%player%} - PK 상태 (일반, 카오틱 등)
+
+# ============================================================
+# PK 발생 시
+# ============================================================
+on death of player:
+	if attacker is a player:
+		# PK 카운트 증가
+		if {pk.count::%attacker%} is not set:
+			set {pk.count::%attacker%} to 0
+		add 1 to {pk.count::%attacker%}
+		
+		# PK 알림
+		send "&c[PK] &4%victim%&c님을 처치했습니다! (PK 횟수: %{pk.count::%attacker%}%)" to attacker
+		send "&c[PK] &4%attacker%&c님에게 처치당했습니다!" to victim
+		
+		# PK 상태 업데이트
+		if {pk.count::%attacker%} >= 10:
+			set {pk.status::%attacker%} to "&4카오틱"
+			send "&4당신은 이제 카오틱 상태입니다!" to attacker
+		else if {pk.count::%attacker%} >= 5:
+			set {pk.status::%attacker%} to "&c레드"
+		else:
+			set {pk.status::%attacker%} to "&e화이트"
+		
+		# ============================================================
+		# 아이템 드랍 확률 계산
+		# ============================================================
+		
+		# 기본 드랍 확률 20%
+		set {_drop_chance} to 20
+		
+		# PK 횟수에 따라 드랍 확률 증가
+		if {pk.count::%attacker%} >= 10:
+			set {_drop_chance} to 50
+			# 카오틱: 50% 확률
+		else if {pk.count::%attacker%} >= 5:
+			set {_drop_chance} to 35
+			# 레드: 35% 확률
+		
+		# 확률 판정
+		set {_random} to random integer between 1 and 100
+		
+		if {_random} <= {_drop_chance}:
+			# 강화된 아이템 드랍
+			send "&c[PK] 강화된 아이템을 드랍합니다!" to attacker
+			send "&c[PK] 당신의 아이템이 드랍되었습니다!" to victim
+			
+			# 피해자의 인벤토리에서 랜덤 아이템 선택
+			set {_items::*} to all items in victim's inventory
+			
+			if size of {_items::*} > 0:
+				# 랜덤 슬롯 선택
+				set {_random_slot} to random integer between 0 and 35
+				set {_drop_item} to slot {_random_slot} of victim's inventory
+				
+				if {_drop_item} is not air:
+					# 아이템 드랍
+					drop {_drop_item} at victim's location
+					clear slot {_random_slot} of victim's inventory
+					
+					send "&c드랍된 아이템: %{_drop_item}%" to victim
+					send "&a획득 가능한 아이템: %{_drop_item}%" to attacker
+					
+					# 이펙트
+					play particle "REDSTONE" at victim's location with offset 1, 1, 1 and count 20
+		else:
+			send "&a[PK] 아이템 드랍 없음 (확률: %{_drop_chance}%%)" to attacker
+
+# ============================================================
+# PK 상태 표시 (액션바)
+# ============================================================
+every 5 seconds:
+	loop all players:
+		if {pk.count::%loop-player%} is set:
+			if {pk.count::%loop-player%} > 0:
+				if {pk.status::%loop-player%} is set:
+					send action bar "&7PK 상태: %{pk.status::%loop-player%}% &7(PK: %{pk.count::%loop-player%}%)" to loop-player
+
+# ============================================================
+# PK 카운트 감소 (시간 경과)
+# ============================================================
+every 10 minutes:
+	loop all players:
+		if {pk.count::%loop-player%} is set:
+			if {pk.count::%loop-player%} > 0:
+				# PK 카운트 1 감소
+				remove 1 from {pk.count::%loop-player%}
+				
+				# 0이 되면 초기화
+				if {pk.count::%loop-player%} <= 0:
+					set {pk.count::%loop-player%} to 0
+					set {pk.status::%loop-player%} to "&a평화"
+					send "&a[PK] PK 카운트가 초기화되었습니다!" to loop-player
+
+# ============================================================
+# PK 상태 확인 명령어
+# ============================================================
+command /pk상태:
+	aliases: /pkstatus
+	trigger:
+		send "&e=== PK 상태 ===" to player
+		
+		if {pk.count::%player%} is set:
+			send "&7PK 횟수: &c%{pk.count::%player%}%" to player
+		else:
+			send "&7PK 횟수: &a0" to player
+		
+		if {pk.status::%player%} is set:
+			send "&7상태: %{pk.status::%player%}%" to player
+		else:
+			send "&7상태: &a평화" to player
+		
+		send "" to player
+		send "&7== 등급별 아이템 드랍 확률 ==" to player
+		send "&e화이트 (0-4 PK): 20%%" to player
+		send "&c레드 (5-9 PK): 35%%" to player
+		send "&4카오틱 (10+ PK): 50%%" to player
+		send "" to player
+		send "&710분마다 PK 카운트 -1" to player
+
+# ============================================================
+# PK 카운트 리셋 명령어 (관리자 전용)
+# ============================================================
+command /pk리셋 [<player>]:
+	permission: admin.pk
+	permission message: &c권한이 없습니다.
+	trigger:
+		if arg-1 is set:
+			set {pk.count::%arg-1%} to 0
+			set {pk.status::%arg-1%} to "&a평화"
+			send "&a%arg-1%의 PK 상태가 초기화되었습니다." to player
+			send "&a[PK] 관리자에 의해 PK 상태가 초기화되었습니다." to arg-1
+		else:
+			send "&c사용법: /pk리셋 <플레이어>" to player
+
+# ============================================================
+# 카오틱 플레이어 표시 (네임태그 색상)
+# ============================================================
+on join:
+	if {pk.count::%player%} is set:
+		if {pk.count::%player%} >= 10:
+			# 카오틱 플레이어는 붉은색 이름
+			set display name of player to "&4[PK] %player%"
+		else if {pk.count::%player%} >= 5:
+			# 레드 플레이어는 빨간색 이름
+			set display name of player to "&c%player%"
+		else:
+			# 일반 플레이어
+			set display name of player to "&f%player%"
+
+# ============================================================
+# PK 보상 (높은 PK 플레이어 처치 시 보너스)
+# ============================================================
+on death of player:
+	if attacker is a player:
+		# 피해자의 PK 카운트 확인
+		if {pk.count::%victim%} is set:
+			if {pk.count::%victim%} >= 10:
+				# 카오틱 플레이어 처치 시 보너스
+				add 5000 to balance of attacker
+				send "&a[PK 보너스] 카오틱 플레이어를 처치하여 5,000 아데나를 받았습니다!" to attacker
+				
+				# 명성 포인트 (선택 사항)
+				# add 10 to {fame::%attacker%}

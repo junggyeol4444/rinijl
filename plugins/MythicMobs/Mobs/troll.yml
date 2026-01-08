@@ -1,0 +1,102 @@
+# ============================================================
+# 트롤 (Troll) 몹 설정
+# 리니지 스타일 고급 몹 - 높은 체력과 재생
+# ============================================================
+
+troll:
+  # 몹 타입
+  Type: ZOMBIE_VILLAGER
+  
+  # 표시 이름
+  Display: '&2트롤 &7[Lv.25]'
+  
+  # 체력 (매우 높음)
+  Health: 250
+  
+  # 공격력
+  Damage: 12
+  
+  # 이동 속도 (느림)
+  MovementSpeed: 0.2
+  
+  # ============================================================
+  # 장비 설정
+  # ============================================================
+  Equipment:
+    - IRON_AXE:0 HAND
+    - CHAINMAIL_HELMET:0 HEAD
+    - CHAINMAIL_CHESTPLATE:0 CHEST
+    - CHAINMAIL_LEGGINGS:0 LEGS
+    - CHAINMAIL_BOOTS:0 FEET
+  
+  # ============================================================
+  # 드랍 아이템 설정
+  # ============================================================
+  Drops:
+    # 아데나 드랍 (더 많은 금액)
+    - money{amount=100-200} 1.0
+    # 100~200 아데나
+    
+    # 고급 아이템
+    - IRON_AXE 0.1
+    - DIAMOND 0.02
+    # 다이아몬드 2% 확률
+    - EMERALD 0.03
+    # 에메랄드 3% 확률
+    - CHAINMAIL_CHESTPLATE 0.05
+    - COOKED_BEEF{display="&6트롤 고기";lore="&7회복력이 뛰어난 고기"} 0.2
+    # 커스텀 아이템 20% 확률
+  
+  # ============================================================
+  # 경험치 설정
+  # ============================================================
+  Options:
+    MMOCoreExp: 50
+    # 50 경험치
+    Level: 25
+    AlwaysShowName: true
+    NameplateHeight: 1.0
+    PreventSunburn: true
+    PreventOtherDrops: true
+    
+    # 넉백 저항
+    KnockbackResistance: 0.5
+  
+  # ============================================================
+  # AI 설정
+  # ============================================================
+  AIGoalSelectors:
+    - clear
+    - meleeattack
+    - randomstroll
+    - float
+  
+  AITargetSelectors:
+    - clear
+    - players
+    - attacker
+  
+  # ============================================================
+  # 스킬 설정 (재생 능력)
+  # ============================================================
+  Skills:
+    # 전투 시작
+    - message{m="&2트롤: 그르르..."} @PlayersInRadius{r=15} ~onCombat
+    
+    # 3초마다 체력 재생
+    - heal{a=5} @self ~onTimer:60
+    
+    # 강력한 일격 (40% 확률)
+    - damage{a=20} @target ~onAttack 0.4
+    
+    # 체력 30% 이하일 때 광폭화
+    - effect:INCREASE_DAMAGE{d=300;l=2} @self ~onDamaged 0.2 >70%
+    - effect:REGENERATION{d=200;l=2} @self ~onDamaged 0.2 >70%
+    - message{m="&c트롤이 광폭화했다!"} @PlayersInRadius{r=20} ~onDamaged 0.2 >70%
+  
+  # ============================================================
+  # 파티클 효과
+  # ============================================================
+  Particles:
+    - effect:VILLAGER_HAPPY @self ~onTimer:100
+    # 재생 중 초록색 파티클

@@ -1,0 +1,169 @@
+# ============================================================
+# 혈맹 버프 시스템 스크립트
+# 혈맹 랭킹 1위는 AFK 존에서 XP 2배 버프
+# SaberFactions 연동
+# ============================================================
+
+# ============================================================
+# 변수 초기화
+# ============================================================
+on load:
+	# {top.faction} - 현재 1위 혈맹
+	# {faction.buff::%player%} - 혈맹 버프 활성화 여부
+
+# ============================================================
+# 혈맹 랭킹 업데이트 (30분마다)
+# ============================================================
+every 30 minutes:
+	# 혈맹 랭킹 1위 확인
+	# SaberFactions의 혈맹 파워 기준
+	# 실제로는 Factions API 사용 필요
+	
+	# 테스트용 더미 데이터
+	# 실제 구현 시 Factions API로 대체
+	broadcast "&e[혈맹] 혈맹 랭킹이 업데이트되었습니다!"
+
+# ============================================================
+# AFK 존에서 몹 처치 시 경험치 버프
+# ============================================================
+on death of mob:
+	if attacker is a player:
+		# AFK 존에 있는지 확인
+		if region at attacker contains "afk_zone":
+			# 플레이어의 혈맹 확인
+			# 실제로는 Factions API 사용
+			# 예: execute console command "f who %attacker%"
+			
+			# 1위 혈맹 소속인지 확인
+			# 테스트용으로 임시 버프 적용
+			if {faction.buff::%attacker%} is true:
+				# 경험치 2배 지급
+				# MMOCore 경험치 추가 지급
+				execute console command "mmocore admin experience add %attacker% 10"
+				
+				# 버프 메시지
+				send action bar "&6[혈맹 버프] &e경험치 2배 획득!" to attacker
+				
+				# 파티클 효과
+				play particle "VILLAGER_HAPPY" at attacker's location with count 5
+
+# ============================================================
+# 혈맹 버프 활성화 명령어 (테스트용)
+# ============================================================
+command /혈맹버프 [<text>]:
+	aliases: /factionbuff
+	permission: admin.faction
+	permission message: &c권한이 없습니다.
+	trigger:
+		if arg-1 is "on" or "활성화":
+			set {faction.buff::%player%} to true
+			send "&a혈맹 버프가 활성화되었습니다!" to player
+			send "&7AFK 존에서 경험치 2배 획득!" to player
+		else if arg-1 is "off" or "비활성화":
+			set {faction.buff::%player%} to false
+			send "&c혈맹 버프가 비활성화되었습니다." to player
+		else:
+			send "&e/혈맹버프 on &7- 버프 활성화 (테스트)" to player
+			send "&e/혈맹버프 off &7- 버프 비활성화" to player
+
+# ============================================================
+# 혈맹 1위 확인 함수 (SaberFactions API 연동 필요)
+# ============================================================
+function checkTopFaction():
+	# 실제 구현 시:
+	# 1. Factions API로 모든 혈맹의 파워 확인
+	# 2. 가장 높은 파워를 가진 혈맹 찾기
+	# 3. {top.faction}에 저장
+	# 4. 해당 혈맹 멤버들에게 {faction.buff::%player%} true 설정
+	
+	# 예시 코드 (실제로는 Java API 사용 필요):
+	# set {_factions::*} to all factions
+	# loop {_factions::*}:
+	#     if power of loop-faction > {_max_power}:
+	#         set {_max_power} to power of loop-faction
+	#         set {top.faction} to loop-faction
+	
+	# 더미 구현
+	broadcast "&6[혈맹] 랭킹 1위 혈맹 업데이트 완료!"
+
+# ============================================================
+# 혈맹 가입 시 버프 확인
+# ============================================================
+# Factions 이벤트 필요 (FactionsJoinEvent 등)
+# 실제 구현 예시:
+# on faction join:
+#     if faction of player is {top.faction}:
+#         set {faction.buff::%player%} to true
+#         send "&a당신의 혈맹은 1위입니다!" to player
+#         send "&aAFK 존에서 경험치 2배 버프가 활성화됩니다!" to player
+
+# ============================================================
+# 혈맹 탈퇴 시 버프 해제
+# ============================================================
+# on faction leave:
+#     delete {faction.buff::%player%}
+#     send "&c혈맹 버프가 해제되었습니다." to player
+
+# ============================================================
+# 혈맹 랭킹 확인 명령어
+# ============================================================
+command /혈맹랭킹:
+	aliases: /factionrank, /factiontop
+	trigger:
+		send "&e━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
+		send "&6&l  혈맹 랭킹 Top 5" to player
+		send "&e━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
+		
+		# 실제로는 Factions API 사용
+		# 테스트용 더미 데이터
+		send "&61위: &e테스트혈맹 &7- 파워: 1000" to player
+		send "&f  &a★ AFK 존 XP 2배 버프!" to player
+		send "&72위: &e두번째혈맹 &7- 파워: 800" to player
+		send "&73위: &e세번째혈맹 &7- 파워: 600" to player
+		send "&74위: &e네번째혈맹 &7- 파워: 400" to player
+		send "&75위: &e다섯번째혈맹 &7- 파워: 200" to player
+		
+		send "&e━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
+		send "&7실제 랭킹은 /f top 명령어로 확인" to player
+
+# ============================================================
+# 버프 상태 확인
+# ============================================================
+command /혈맹버프상태:
+	trigger:
+		if {faction.buff::%player%} is true:
+			send "&a[혈맹 버프] 활성화됨!" to player
+			send "&7AFK 존에서 경험치 2배 획득" to player
+		else:
+			send "&c[혈맹 버프] 비활성화됨" to player
+			send "&7혈맹이 1위가 되면 버프를 받을 수 있습니다!" to player
+
+# ============================================================
+# 혈맹 멤버 확인 및 버프 자동 적용 (로그인 시)
+# ============================================================
+on join:
+	wait 3 seconds
+	# 혈맹 확인 및 버프 적용
+	# 실제로는 Factions API 사용
+	# if faction of player is {top.faction}:
+	#     set {faction.buff::%player%} to true
+	#     send "&a[혈맹 버프] 당신의 혈맹은 1위입니다!" to player
+
+# ============================================================
+# 혈맹 파워 업데이트 시 랭킹 체크
+# ============================================================
+# Factions 이벤트 리스너 필요
+# on faction power change:
+#     checkTopFaction()
+
+# ============================================================
+# 주기적 랭킹 업데이트 및 공지 (1시간마다)
+# ============================================================
+every 1 hour:
+	# 랭킹 업데이트
+	checkTopFaction()
+	
+	# 1위 혈맹 공지
+	if {top.faction} is set:
+		broadcast "&6[혈맹] 현재 1위 혈맹: &e%{top.faction}%"
+		broadcast "&7AFK 존에서 경험치 2배 버프 제공!"

@@ -1,0 +1,152 @@
+# ============================================================
+# 드레이크 (Drake) 몹 설정
+# 리니지 스타일 최고급 보스급 몹 - 드래곤 계열
+# ============================================================
+
+drake:
+  # 몹 타입
+  Type: ENDER_DRAGON
+  
+  # 표시 이름
+  Display: '&4&l드레이크 &c[Lv.50 보스]'
+  
+  # 체력 (보스급)
+  Health: 1000
+  
+  # 공격력
+  Damage: 25
+  
+  # 이동 속도
+  MovementSpeed: 0.3
+  
+  # ============================================================
+  # 장비 설정
+  # ============================================================
+  # 드래곤은 장비 착용 불가
+  
+  # ============================================================
+  # 드랍 아이템 설정 (고급 보상)
+  # ============================================================
+  Drops:
+    # 아데나 드랍 (대량)
+    - money{amount=500-1000} 1.0
+    # 500~1000 아데나
+    
+    # 고급 아이템
+    - DIAMOND_SWORD{display="&c드레이크의 송곳니";lore="&7강력한 화염 속성 검";enchants=FIRE_ASPECT:2,SHARPNESS:5} 0.3
+    # 인챈트된 다이아 검 30%
+    
+    - DIAMOND_CHESTPLATE{display="&4드레이크의 비늘 갑옷";lore="&7불에 타지 않는 갑옷";enchants=PROTECTION:4,FIRE_PROTECTION:4} 0.2
+    # 인챈트된 다이아 갑옷 20%
+    
+    - DIAMOND 0.8
+    # 다이아몬드 80%
+    
+    - EMERALD 0.6
+    # 에메랄드 60%
+    
+    - DRAGON_HEAD{display="&4드레이크의 머리";lore="&7전설적인 전리품"} 0.1
+    # 드래곤 머리 10%
+    
+    - ELYTRA{display="&4드레이크의 날개";lore="&7하늘을 날 수 있는 날개";enchants=UNBREAKING:3} 0.05
+    # 날개 5%
+    
+    - ENCHANTED_GOLDEN_APPLE 0.4
+    # 황금 사과 40%
+    
+    - NETHERITE_INGOT 0.15
+    # 네더라이트 주괴 15%
+  
+  # ============================================================
+  # 경험치 설정 (대량)
+  # ============================================================
+  Options:
+    MMOCoreExp: 200
+    # 200 경험치
+    Level: 50
+    AlwaysShowName: true
+    NameplateHeight: 3.0
+    PreventSunburn: true
+    PreventOtherDrops: true
+    
+    # 매우 높은 넉백 저항
+    KnockbackResistance: 0.9
+    
+    # 보스 바 표시
+    ShowBossBar: true
+    BossBarTitle: '&4&l드레이크'
+    BossBarColor: RED
+    BossBarStyle: SEGMENTED_10
+  
+  # ============================================================
+  # AI 설정
+  # ============================================================
+  AIGoalSelectors:
+    - clear
+    - meleeattack
+    - randomstroll
+    - float
+  
+  AITargetSelectors:
+    - clear
+    - players
+    - attacker
+  
+  # ============================================================
+  # 스킬 설정 (보스급 패턴)
+  # ============================================================
+  Skills:
+    # 전투 시작 - 등장 연출
+    - message{m="&4&l[경고] 드레이크가 나타났습니다!"} @PlayersInWorld ~onSpawn
+    - sound{s=ENTITY_ENDER_DRAGON_GROWL;v=2;p=0.5} @self ~onSpawn
+    - effect{p=EXPLOSION_HUGE;a=5;hs=2;vs=2} @self ~onSpawn
+    
+    # 화염 숨결 (매 10초마다)
+    - projectile{
+        onTick=particles{p=FLAME;a=20;s=0.3;hs=1;vs=1} @origin;
+        onHit=damage{a=30} @target;
+        onHit=ignite{t=100} @target;
+        v=3;i=1;hy=1;hn=false
+      } @target ~onTimer:200
+    - message{m="&c드레이크가 화염을 뿜었다!"} @PlayersInRadius{r=30} ~onTimer:200
+    
+    # 지면 강타 (매 15초마다)
+    - damage{a=20} @PlayersInRadius{r=8} ~onTimer:300
+    - effect{p=EXPLOSION_LARGE;a=10;hs=3;vs=1} @self ~onTimer:300
+    - message{m="&c드레이크가 지면을 강타했다!"} @PlayersInRadius{r=30} ~onTimer:300
+    
+    # 일반 공격 시 화염 부여
+    - ignite{t=80} @target ~onAttack 0.8
+    
+    # 체력 70% 이하 - 페이즈 2
+    - message{m="&4드레이크: 크아아아악! (분노)"} @PlayersInRadius{r=40} ~onDamaged 0.5 >30%
+    - effect:INCREASE_DAMAGE{d=400;l=2} @self ~onDamaged 0.5 >30%
+    - effect:SPEED{d=400;l=1} @self ~onDamaged 0.5 >30%
+    
+    # 체력 40% 이하 - 페이즈 3 (광폭화)
+    - message{m="&4&l드레이크가 광폭화했다!"} @PlayersInRadius{r=50} ~onDamaged 0.3 >60%
+    - effect:INCREASE_DAMAGE{d=600;l=3} @self ~onDamaged 0.3 >60%
+    - effect:REGENERATION{d=600;l=2} @self ~onDamaged 0.3 >60%
+    - summon{m=BLAZE;a=3;y=0} @self ~onDamaged 0.3 >60%
+    # 블레이즈 소환
+    
+    # 메테오 낙하 (매 20초, 체력 50% 이하)
+    - effect{p=FIREWORKS_SPARK;a=50;hs=5;vs=10} @self ~onTimer:400 >50%
+    - damage{a=40} @PlayersInRadius{r=15} ~onTimer:400 >50%
+    - ignite{t=100} @PlayersInRadius{r=15} ~onTimer:400 >50%
+    - message{m="&c&l메테오가 떨어진다!"} @PlayersInWorld ~onTimer:400 >50%
+    
+    # 사망 시 대폭발
+    - explosion{yield=3;fire=true} @self ~onDeath
+    - message{m="&4&l드레이크를 처치했습니다!"} @PlayersInWorld ~onDeath
+    - effect{p=EXPLOSION_HUGE;a=20;hs=5;vs=5} @self ~onDeath
+    - sound{s=ENTITY_ENDER_DRAGON_DEATH;v=2;p=1} @self ~onDeath
+  
+  # ============================================================
+  # 파티클 효과 (항상)
+  # ============================================================
+  Particles:
+    - effect:FLAME{a=5;s=0.5;hs=1;vs=1} @self ~onTimer:20
+    # 항상 화염 파티클
+    - effect:SMOKE_LARGE{a=3;s=0.3} @self ~onTimer:40
+    # 연기 효과

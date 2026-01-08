@@ -1,0 +1,36 @@
+# ============================================================
+# EpicBosses 기본 설정
+# 월드 보스 레이드 시스템 - Mineage Hybrid 서버용
+# ============================================================
+
+# 데이터베이스 설정
+database:
+  type: sqlite
+  # SQLite 파일 사용
+
+# 보스 스폰 설정
+bosses:
+  # 자동 스폰 활성화
+  auto-spawn: false
+  # 수동 스폰 사용 (이벤트용)
+
+# 보상 설정
+rewards:
+  # 보상 시스템 활성화
+  enabled: true
+  
+  # 상위 데미지 플레이어 보상
+  top-damage-rewards: true
+
+# GUI 설정
+gui:
+  # 보스 정보 GUI
+  enabled: true
+
+# 메시지 설정
+messages:
+  # 보스 스폰 전체 공지
+  broadcast-spawn: true
+  
+  # 보스 사망 공지
+  broadcast-death: true

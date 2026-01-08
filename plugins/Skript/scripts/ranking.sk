@@ -1,0 +1,164 @@
+# ============================================================
+# 랭킹 시스템 스크립트
+# /랭킹 명령어로 킬수/레벨 상위 10명 표시
+# ============================================================
+
+# ============================================================
+# 변수 초기화
+# ============================================================
+on load:
+	# {kills::%player%} - 플레이어의 킬 수
+	# {player.level::%player%} - MMOCore 레벨 (별도 저장)
+
+# ============================================================
+# 킬 카운트 (PvP)
+# ============================================================
+on death of player:
+	if attacker is a player:
+		# 킬 수 증가
+		if {kills::%attacker%} is not set:
+			set {kills::%attacker%} to 0
+		add 1 to {kills::%attacker%}
+		
+		send "&a킬 수가 증가했습니다! (총 %{kills::%attacker%}% 킬)" to attacker
+
+# ============================================================
+# 몹 킬 카운트
+# ============================================================
+on death of mob:
+	if attacker is a player:
+		# 몹 킬 수 증가
+		if {mob.kills::%attacker%} is not set:
+			set {mob.kills::%attacker%} to 0
+		add 1 to {mob.kills::%attacker%}
+
+# ============================================================
+# 랭킹 명령어
+# ============================================================
+command /랭킹 [<text>]:
+	aliases: /ranking, /rank
+	trigger:
+		# 기본은 킬수 랭킹
+		if arg-1 is not set:
+			set {_type} to "kills"
+		else:
+			set {_type} to arg-1
+		
+		# 킬수 랭킹
+		if {_type} is "kills" or "킬수":
+			send "&e&l━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
+			send "&6&l  PvP 킬 랭킹 Top 10" to player
+			send "&e&l━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
+			
+			# 모든 플레이어의 킬 수를 리스트로 만들기
+			set {_rank} to 1
+			set {_list::*} to {kills::*}
+			
+			# 상위 10명 정렬 및 표시 (간단한 방식)
+			loop 10 times:
+				set {_max} to 0
+				set {_max_player} to ""
+				
+				loop {kills::*}:
+					if loop-value > {_max}:
+						set {_max} to loop-value
+						set {_max_player} to loop-index
+				
+				if {_max_player} is not "":
+					# 랭킹 표시
+					if {_rank} is 1:
+						send "&6★ 1위: &e%{_max_player}% &7- &c%{_max}% 킬" to player
+					else if {_rank} is 2:
+						send "&f★ 2위: &e%{_max_player}% &7- &c%{_max}% 킬" to player
+					else if {_rank} is 3:
+						send "&c★ 3위: &e%{_max_player}% &7- &c%{_max}% 킬" to player
+					else:
+						send "&7  %{_rank}%위: &e%{_max_player}% &7- &c%{_max}% 킬" to player
+					
+					# 표시한 플레이어는 목록에서 제거
+					delete {kills::%{_max_player}%}
+					add 1 to {_rank}
+			
+			send "&e&l━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
+			send "&7/랭킹 몹킬 &f- 몹 킬 랭킹" to player
+			send "&7/랭킹 레벨 &f- 레벨 랭킹" to player
+		
+		# 몹 킬 랭킹
+		else if {_type} is "mob" or "몹킬" or "mobkills":
+			send "&e&l━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
+			send "&6&l  몹 킬 랭킹 Top 10" to player
+			send "&e&l━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
+			
+			set {_rank} to 1
+			
+			loop 10 times:
+				set {_max} to 0
+				set {_max_player} to ""
+				
+				loop {mob.kills::*}:
+					if loop-value > {_max}:
+						set {_max} to loop-value
+						set {_max_player} to loop-index
+				
+				if {_max_player} is not "":
+					if {_rank} is 1:
+						send "&6★ 1위: &e%{_max_player}% &7- &c%{_max}% 킬" to player
+					else if {_rank} is 2:
+						send "&f★ 2위: &e%{_max_player}% &7- &c%{_max}% 킬" to player
+					else if {_rank} is 3:
+						send "&c★ 3위: &e%{_max_player}% &7- &c%{_max}% 킬" to player
+					else:
+						send "&7  %{_rank}%위: &e%{_max_player}% &7- &c%{_max}% 킬" to player
+					
+					delete {mob.kills::%{_max_player}%}
+					add 1 to {_rank}
+			
+			send "&e&l━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
+		
+		# 레벨 랭킹 (MMOCore 연동 필요)
+		else if {_type} is "level" or "레벨":
+			send "&e&l━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
+			send "&6&l  레벨 랭킹 Top 10" to player
+			send "&e&l━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
+			send "&c(MMOCore 플러그인 연동 필요)" to player
+			send "&7현재 기능 준비 중..." to player
+			send "&e&l━━━━━━━━━━━━━━━━━━━━━━━━━━" to player
+
+# ============================================================
+# 개인 통계 확인 명령어
+# ============================================================
+command /내통계:
+	aliases: /mystats
+	trigger:
+		send "&e=== 내 통계 ===" to player
+		
+		# PvP 킬
+		if {kills::%player%} is set:
+			send "&6PvP 킬: &a%{kills::%player%}%" to player
+		else:
+			send "&6PvP 킬: &a0" to player
+		
+		# 몹 킬
+		if {mob.kills::%player%} is set:
+			send "&6몹 킬: &a%{mob.kills::%player%}%" to player
+		else:
+			send "&6몹 킬: &a0" to player
+		
+		# 잔액
+		send "&6아데나: &a%balance of player%" to player
+
+# ============================================================
+# 랭킹 리셋 명령어 (관리자 전용)
+# ============================================================
+command /랭킹리셋 <text>:
+	permission: admin.ranking
+	permission message: &c권한이 없습니다.
+	trigger:
+		if arg-1 is "kills" or "킬수":
+			clear {kills::*}
+			broadcast "&c[랭킹] PvP 킬 랭킹이 초기화되었습니다!"
+		else if arg-1 is "mob" or "몹킬":
+			clear {mob.kills::*}
+			broadcast "&c[랭킹] 몹 킬 랭킹이 초기화되었습니다!"
+		else:
+			send "&c사용법: /랭킹리셋 <kills|mob>" to player

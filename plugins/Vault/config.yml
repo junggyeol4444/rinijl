@@ -1,0 +1,8 @@
+# Vault 기본 설정 파일
+# 경제 API 플러그인
+
+# Vault는 기본적으로 config.yml이 필요하지 않습니다
+# EssentialsX와 연동하여 경제 시스템 사용
+
+# 권한 시스템: LuckPerms 사용
+# 경제 시스템: EssentialsX 사용
